@@ -12,10 +12,9 @@ var nodePath = require('path');
 
 module.exports = function(grunt) {
   grunt.registerMultiTask('sass_import', 'Glob functionality for loading Sass partials', function() {
-    var allowedExtensions = ['.scss'];
-    var includeExtension = false;
 
     var options = this.options({
+      allowedExtensions: ['.scss'],
       includeExtension: false,
       basePath: ''
     });
@@ -23,7 +22,6 @@ module.exports = function(grunt) {
     this.files.forEach(function (file) {
       var output = '';
       var destRoot = nodePath.dirname(options.basePath + file.dest);
-
       file.orig.src.forEach(function (path) {
         var resultFiles = [];
 
@@ -35,7 +33,7 @@ module.exports = function(grunt) {
               var file = splitFilename(match);
 
               // Discard if extension is now allowed
-              if (allowedExtensions.indexOf(file.extension) == -1) {
+              if (options.allowedExtensions.indexOf(file.extension) == -1) {
                 return;
               }
 
@@ -48,7 +46,7 @@ module.exports = function(grunt) {
             var file = splitFilename(match);
 
               // Discard if extension is now allowed
-              if (allowedExtensions.indexOf(file.extension) == -1) {
+              if (options.allowedExtensions.indexOf(file.extension) == -1) {
                 return;
               }
 
@@ -71,7 +69,7 @@ module.exports = function(grunt) {
               var file = splitFilename(match);
 
               // Discard if extension is now allowed
-              if (allowedExtensions.indexOf(file.extension) == -1) {
+              if (options.allowedExtensions.indexOf(file.extension) == -1) {
                 return;
               }
 
@@ -84,7 +82,7 @@ module.exports = function(grunt) {
             var file = splitFilename(match);
 
             // Discard if extension is now allowed
-            if (allowedExtensions.indexOf(file.extension) == -1) {
+            if (options.allowedExtensions.indexOf(file.extension) == -1) {
               return;
             }
 
@@ -109,7 +107,8 @@ module.exports = function(grunt) {
     }
 
     function buildOutputLine(file) {
-      return '@import \'' + file + '\';\n';
+      // Return SCSS or SASS syntax
+      return (/\.(scss)$/.exec(file.dest)) ? '@import \'' + file + '\';\n' : '@import \'' + file + '\'\n';
     }
   });
 
